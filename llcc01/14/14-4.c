@@ -2,7 +2,7 @@
 typedef struct
 {
     char name[11];
-    long id;
+    long long id;
     int score[3];
     double score_avg;
 } student;
@@ -10,14 +10,14 @@ typedef struct
 int main()
 {
     student s[130];
-    long op_id;
+    long long op_id;
     int n, i, j, cmd, sn = 0, is_exist; //sn为最大索引+1
     student t;//输入缓冲
     scanf("%d", &n);
     for (i = 0; i < n; i++)
     {
         scanf("%d", &cmd);
-        scanf("%d", &op_id);
+        scanf("%lld", &op_id);
         for (j = 0; j < sn; j++)
         {
             if (s[j].id == op_id)
