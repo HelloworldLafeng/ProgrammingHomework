@@ -20,16 +20,20 @@ int main() {
 // 应该让用 malloc 吧？
 #include <stdlib.h>
 
-void swap_(int *p, int *q) {
-  int t = *p;
+typedef struct {
+  int id, N, *z;
+} Node;
+
+void swap_(Node *p, Node *q) {
+  Node t = *p;
   *p = *q;
   *q = t;
 }
 
-void sort_(int *l, int *r, int **z) {
-  for (int *p = l; p < r - 1; ++p)
-    for (int *q = l; q - l < r - p - 1; ++q)
-      if (*z[*q] > *z[*(q + 1)])
+void sort_(const Node *l, const Node *r) {
+  for (Node *p = l; p < r - 1; ++p)
+    for (Node *q = l; q - l < r - p - 1; ++q)
+      if (q->id > q[1].id)
         swap_(q, q + 1);
 }
 
@@ -44,31 +48,27 @@ void sortAndOutput(int *data, int size) {
     ++N;
   }
 
-  int **z = (int **)malloc(N * sizeof (int *));
-  int *y = (int *)malloc(N * sizeof (int));
-  for (int i = 0; i < N; ++i)
-    y[i] = i;
-  for (int p = 0, tmpN; p < size; ) {
-    // z[tot].id = data[p++];
-    z[tot++] = data + p;
-    ++p;
-    tmpN = data[p++];
-    for (int j = 0; j < tmpN; ++j)
-      ++p;
+  Node *z = (Node *)malloc(N * sizeof (Node));
+  for (int p = 0; p < size; ) {
+    z[tot].id = data[p++];
+    z[tot].N = data[p++];
+    z[tot].z = (int *)malloc(z[tot].N * sizeof (int));
+    for (int j = 0; j < z[tot].N; ++j)
+      z[tot].z[j] = data[p++];
+    ++tot;
   }
 
   // 原谅我 0~N-1 和 1~N 混用（
-  sort_(y, y + N, z);
+  sort_(z, z + N);
 
-  for (int i = 0, tmpN, *p; i < N; ++i) {
-    p = z[y[i]];
-    printf("%d ", *p++);
-    printf("%d ", (tmpN = *p++));
-    for (int j = 0; j < tmpN; ++j)
-      printf("%d%c", *p++, " \n"[j == tmpN - 1]);
+  for (int i = 0; i < N; ++i) {
+    printf("%d %d ", z[i].id, z[i].N);
+    for (int j = 0; j < z[i].N; ++j)
+      printf("%d%c", z[i].z[j], " \n"[j == z[i].N - 1]);
   }
 
+  for (int i = 0; i < N; ++i)
+    free(z[i].z);
   free(z);
-  free(y);
 }
 
